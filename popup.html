@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LingoLens AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 340px;
+      background: #0f0f13;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+    }
+    .header {
+      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.1));
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-icon { font-size: 24px; }
+    .header-text h1 { font-size: 15px; font-weight: 700; color: #c4b5fd; }
+    .header-text p { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    .free-badge {
+      margin-left: auto;
+      background: rgba(34,197,94,0.15);
+      color: #86efac;
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 20px;
+      padding: 3px 9px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .body { padding: 14px 16px; display: flex; flex-direction: column; gap: 13px; }
+
+    /* Provider Cards */
+    .provider-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .provider-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 11px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: rgba(255,255,255,0.03);
+    }
+    .provider-card:hover { border-color: rgba(139,92,246,0.35); background: rgba(139,92,246,0.06); }
+    .provider-card.active {
+      border-color: rgba(139,92,246,0.6);
+      background: rgba(139,92,246,0.12);
+    }
+    .card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+    .card-icon { font-size: 20px; }
+    .card-name { font-size: 13px; font-weight: 700; color: #c4b5fd; }
+    .card-model { font-size: 10px; color: #64748b; margin-bottom: 5px; }
+    .card-free {
+      display: inline-block;
+      background: rgba(34,197,94,0.12);
+      color: #86efac;
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .card-limit { font-size: 10px; color: #475569; margin-top: 3px; }
+
+    /* Key section */
+    .key-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .key-header { display: flex; align-items: center; justify-content: space-between; }
+    .key-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+    .get-key-link {
+      font-size: 11px; color: #7c3aed; text-decoration: none; font-weight: 600;
+    }
+    .get-key-link:hover { text-decoration: underline; }
+
+    .key-wrap { position: relative; }
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 9px 36px 9px 11px;
+      color: #e2e8f0;
+      font-size: 12px;
+      font-family: monospace;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: rgba(139,92,246,0.5); }
+    .eye-btn {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #475569; cursor: pointer; font-size: 14px;
+    }
+    .key-hint { font-size: 11px; color: #475569; line-height: 1.5; }
+
+    select {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 9px 11px;
+      color: #e2e8f0;
+      font-size: 13px;
+      outline: none;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+      transition: border-color 0.15s;
+    }
+    select:focus { border-color: rgba(139,92,246,0.5); }
+    select option { background: #1e1e2e; color: #e2e8f0; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .save-btn {
+      width: 100%; background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff; border: none; border-radius: 10px; padding: 11px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .save-btn:hover { opacity: 0.88; }
+    .save-btn:active { transform: scale(0.98); }
+
+    .status { font-size: 12px; text-align: center; padding: 7px; border-radius: 8px; display: none; }
+    .status.success { display: block; color: #86efac; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.06); }
+
+    .how-to { padding: 12px 16px 14px; }
+    .how-to h2 { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .steps { display: flex; flex-direction: column; gap: 7px; }
+    .step { display: flex; gap: 10px; align-items: flex-start; }
+    .step-num {
+      width: 20px; height: 20px; background: rgba(139,92,246,0.2); color: #a78bfa;
+      border-radius: 50%; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-text { color: #94a3b8; font-size: 12px; line-height: 1.5; }
+    .step-text a { color: #7c3aed; text-decoration: none; }
+    .step-text a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="header-icon">🔍</span>
+    <div class="header-text">
+      <h1>LingoLens AI</h1>
+      <p>India Regional Web Explainer</p>
+    </div>
+    <span class="free-badge">✦ FREE</span>
+  </div>
+
+  <div class="body">
+
+    <!-- Provider Cards -->
+    <div>
+      <label style="display:block; margin-bottom:8px;">Choose Free AI</label>
+      <div class="provider-cards">
+        <div class="provider-card active" data-provider="gemini">
+          <div class="card-top">
+            <span class="card-icon">🔵</span>
+            <span class="card-name">Gemini</span>
+          </div>
+          <div class="card-model">gemini-2.0-flash</div>
+          <span class="card-free">FREE</span>
+          <div class="card-limit">No credit card needed</div>
+        </div>
+        <div class="provider-card" data-provider="groq">
+          <div class="card-top">
+            <span class="card-icon">⚡</span>
+            <span class="card-name">Groq</span>
+          </div>
+          <div class="card-model">Llama 3.3 70B</div>
+          <span class="card-free">FREE</span>
+          <div class="card-limit">14,400 req/day free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Key box -->
+    <div class="key-section">
+      <div class="key-header">
+        <span class="key-label" id="keyLabel">Gemini API Key</span>
+        <a class="get-key-link" id="getKeyLink" href="https://aistudio.google.com/app/apikey" target="_blank">Get free key →</a>
+      </div>
+      <div class="key-wrap">
+        <input type="password" id="apiKey" placeholder="AIza…" />
+        <button class="eye-btn" id="eyeBtn">👁</button>
+      </div>
+      <div class="key-hint" id="keyHint">Sign in with Google → Create API key → Copy & paste here. No billing required.</div>
+    </div>
+
+    <!-- Language + Style -->
+    <div class="row2">
+      <div class="field-group">
+        <label>Language</label>
+        <select id="language">
+          <option value="Hindi">हिन्दी – Hindi</option>
+          <option value="Bengali">বাংলা – Bengali</option>
+          <option value="Telugu">తెలుగు – Telugu</option>
+          <option value="Marathi">मराठी – Marathi</option>
+          <option value="Tamil">தமிழ் – Tamil</option>
+          <option value="Gujarati">ગુજરાતી – Gujarati</option>
+          <option value="Kannada">ಕನ್ನಡ – Kannada</option>
+          <option value="Malayalam">മലയാളം – Malayalam</option>
+          <option value="Punjabi">ਪੰਜਾਬੀ – Punjabi</option>
+          <option value="Odia">ଓଡ଼ିଆ – Odia</option>
+          <option value="Bhojpuri">भोजपुरी – Bhojpuri</option>
+          <option value="English">English</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Style</label>
+        <select id="style">
+          <option value="simple">Simple</option>
+          <option value="summary">Summary</option>
+          <option value="detailed">Detailed</option>
+          <option value="kid">Kid-friendly</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="save-btn" id="saveBtn">💾 Save Settings</button>
+    <div class="status" id="status">✓ Settings saved! Right-click any selected text to use LingoLens.</div>
+  </div>
+
+  <hr />
+
+  <div class="how-to">
+    <h2>How to get your FREE key</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-text">
+          <strong>Gemini:</strong> Go to <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → sign in with Google → click <em>"Create API Key"</em>
+        </span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-text">
+          <strong>Groq:</strong> Go to <a href="https://console.groq.com" target="_blank">console.groq.com</a> → sign up free → API Keys → Create key
+        </span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span class="step-text">Paste the key above, save, then select text on any page and right-click → <strong style="color:#a78bfa">Explain with LingoLens</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
